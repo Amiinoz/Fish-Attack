@@ -16,7 +16,7 @@ const mouse = {
   y: canvas.height / 2,
   click: false,
 };
-canvas.addEventListener("mousedown", (event) => {
+canvas.addEventListener("mousedown", function (event) {
   mouse.click = true;
   mouse.x = event.x - canvasPosition.left;
   mouse.y = event.y - canvasPosition.top;
@@ -24,7 +24,7 @@ canvas.addEventListener("mousedown", (event) => {
   // console.log(mouse.x, mouse.y);
   // console.log(canvasPosition);
 });
-canvas.addEventListener("mouseup", () => {
+canvas.addEventListener("mouseup", function() {
   mouse.click = false;
 });
 
@@ -47,11 +47,11 @@ class Player {
     const dy = this.y - mouse.y;
     if (mouse.x != this.x) {
       // this.x--;
-      this.x -= dx / 30;
+      this.x -= dx/20;
     }
     if (mouse.y != this.y) {
       // this.y--;
-      this.y -= dy / 30;
+      this.y -= dy/20;
     }
   }
 
@@ -74,13 +74,49 @@ class Player {
 }
 
 const player = new Player();
+// Creating bubbles
+const bubblesArray = [];
+class Bubble {
+  constructor(){
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.radius = 50;
+    this.speed = Math.random() * 5 +1;
+    this.distance;
+  }
+  update(){
+    this.y -= this.speed;
+  }
+  draw(){
+    ctx.fillStyle = 'blue';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI *2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.stroke();
+  }
+}
+function handleBubbles(){
+  if(gameFrame % 50 == 0){
+    bubblesArray.push(new Bubble());
+    console.log(bubblesArray.length);
+  }
+  for (let i = 0; i < bubblesArray.length; i++) {
+    bubblesArray[i].update();
+    bubblesArray[i].draw();
+  }
+}
+
 // Animation loop
 function animate() {
   // clearing canvas between animation
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   player.update();
   player.draw();
+  gameFrame++;
+  // console.log(gameFrame);
   // using recursion(where function calls it's self over and over again)
   requestAnimationFrame(animate);
 }
 animate();
+
